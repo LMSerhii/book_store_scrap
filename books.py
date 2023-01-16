@@ -20,13 +20,23 @@ def collect_data():
             response = session.get(url=page_url, headers=headers)
             soup = BeautifulSoup(response.text, "lxml")
             cards = soup.find_all("div", class_="ant-card-body")
-            for card in cards:
+            for card in cards[:2]:
                 link_to_card = f"https://starylev.com.ua{card.find('a').get('href', None)}"
                 # print(link_to_card)
                 response = session.get(url=link_to_card, headers=headers)
                 soup = BeautifulSoup(response.text, "lxml")
-                author_link = soup.find("")
-
+                book_title = soup.find("div", class_="product-page__info").find("h1")
+                author = book_title.previous_sibling.text.strip()
+                book_title = book_title.text.strip()
+                # print(author, book_title)
+                book_type = soup.find("div", class_="product-page__variants")
+                if book_type is not None:
+                    book_type = book_type.text
+                else:
+                    book_type = ''
+                # print(book_type)
+                stock = soup.find("div", class_="product-page__status status-13 ")
+                print(stock)
             time.sleep(3)
 
 
